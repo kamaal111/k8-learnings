@@ -3,6 +3,8 @@ set export
 PORT := "8000"
 
 CONTAINER_NAME := "service1"
+REGION := "europe-west1"
+REPOSITORY_NAME := "kubernetes-learnings"
 
 default:
     just --list
@@ -14,6 +16,22 @@ run: stop-and-remove-container
     docker run -dp $PORT:$PORT --name $CONTAINER_NAME -e PORT=$PORT $CONTAINER_NAME
 
 build-run: build run
+
+upload-image project_id container_id: build
+    just tag-image {{ project_id }} {{ container_id }}
+    just push-image {{ project_id }} {{ container_id }}
+
+tag-image project_id container_id:
+    #!/bin/zsh
+
+    IMAGE_ADDRESS="$REGION-docker.pkg.dev/{{ project_id }}/$REPOSITORY_NAME/$CONTAINER_NAME:{{ container_id }}"
+    docker tag $CONTAINER_NAME $IMAGE_ADDRESS
+
+push-image project_id container_id:
+    #!/bin/zsh
+
+    IMAGE_ADDRESS="$REGION-docker.pkg.dev/{{ project_id }}/$REPOSITORY_NAME/$CONTAINER_NAME:{{ container_id }}"
+    docker push $IMAGE_ADDRESS
 
 run-dev:
     bun dev
