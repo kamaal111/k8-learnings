@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: service1
+        gcp-auth-skip-secret: "true"
     spec:
       containers:
         - name: service1

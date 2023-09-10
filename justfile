@@ -13,6 +13,9 @@ start-dashboard:
 
 start-cluster:
     minikube start
+    minikube addons enable gcp-auth
+    just apply-deployment
+    just start-dashboard
 
 apply-deployment:
     kubectl apply -f deployment.yaml
