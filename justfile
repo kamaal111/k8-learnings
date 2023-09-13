@@ -8,17 +8,19 @@ default:
 get-all-pods:
     kubectl get po -A
 
+start: start-cluster start-addons apply-deployment start-dashboard
+
 start-dashboard:
     minikube dashboard
 
 start-cluster:
     minikube start
+
+start-addons:
     minikube addons enable gcp-auth
-    just apply-deployment
-    just start-dashboard
 
 apply-deployment:
-    kubectl apply -f deployment.yaml
+    kubectl apply -f kubernetes-manifests -R
 
 remove-all-pods:
     minikube delete --all
